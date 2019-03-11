@@ -36,7 +36,7 @@ not warn at all, as `ksh` supports decimals in arithmetic contexts.
 
 :   Emit warnings in sourced files. Normally, `shellcheck` will only warn
     about issues in the specified files. With this option, any issues in
-    sourced files files will also be reported.
+    sourced files will also be reported.
 
 **-C**[*WHEN*],\ **--color**[=*WHEN*]
 
@@ -62,6 +62,10 @@ not warn at all, as `ksh` supports decimals in arithmetic contexts.
 :   Specify the output format of shellcheck, which prints its results in the
     standard output. Subsequent **-f** options are ignored, see **FORMATS**
     below for more information.
+
+**--norc**
+
+:   Don't try to look for .shellcheckrc configuration files.
 
 **-S**\ *SEVERITY*,\ **--severity=***severity*
 
@@ -191,6 +195,31 @@ Valid keys are:
 :   Overrides the shell detected from the shebang.  This is useful for
     files meant to be included (and thus lacking a shebang), or possibly
     as a more targeted alternative to 'disable=2039'.
+
+# RC FILES
+Unless `--norc` is used, ShellCheck will look for a file `.shellcheckrc` or
+`shellcheckrc` in the script's directory and each parent directory. If found,
+it will read `key=value` pairs from it and treat them as file-wide directives.
+
+Here is an example `.shellcheckrc`:
+
+    # Don't suggest using -n in [ $var ]
+    disable=SC2244
+
+    # Allow using `which` since it gives full paths and is common enough
+    disable=SC2230
+
+If no `.shellcheckrc` is found in any of the parent directories, ShellCheck
+will look in `~/.shellcheckrc` followed by the XDG config directory
+(usually `~/.config/shellcheckrc`) on Unix, or `%APPDATA%/shellcheckrc` on
+Windows. Only the first file found will be used.
+
+Note for Snap users: the Snap sandbox disallows access to hidden files.
+Use `shellcheckrc` without the dot instead.
+
+Note for Docker users: ShellCheck will only be able to look for files that
+are mounted in the container, so `~/.shellcheckrc` will not be read.
+
 
 # ENVIRONMENT VARIABLES
 The environment variable `SHELLCHECK_OPTS` can be set with default flags:
